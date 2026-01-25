@@ -42,7 +42,7 @@ RUN cd frontend && pnpm run build
 RUN cargo build --release --bin server
 
 # Runtime stage
-FROM alpine:latest AS runtime
+FROM alpine:3.23.2 AS runtime
 
 # Install runtime dependencies
 RUN apk add --no-cache \

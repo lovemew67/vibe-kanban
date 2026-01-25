@@ -1,0 +1,14 @@
+---
+services:
+  vibe-server:
+    image: bloopai/vibe-kanban:0.0.160-alpine3.23
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - VK_AUTH_SECRET=Y2PFb2aJDdBOk34af3u64BBSe4sWbi
+    volumes:
+      - ~/.ssh/agentic/id_rsa:/home/appuser/.ssh/id_rsa:ro
+      - ./data/vkdata:/home/appuser/.local/share/vibe-kanban
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
