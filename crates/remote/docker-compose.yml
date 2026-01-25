@@ -1,22 +1,21 @@
 services:
   remote-db:
-    image: postgres:16-alpine
-    command: [ "postgres", "-c", "wal_level=logical" ]
+    image: postgres:15.15-alpine3.23
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: remote
       POSTGRES_USER: remote
       POSTGRES_PASSWORD: remote
+    command: ["postgres", "-c", "wal_level=logical"]
     volumes:
-      - remote-db-data:/var/lib/postgresql/data
+      - ./data/pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U remote -d remote" ]
+      test: ["CMD-SHELL", "pg_isready -U remote -d remote"]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 5s
-    ports:
-      - "5432:5432"
-
   electric:
     image: electricsql/electric:1.2.11
     working_dir: /app
@@ -30,20 +29,19 @@ services:
       ELECTRIC_USAGE_REPORTING: false
       ELECTRIC_FEATURE_FLAGS: allow_subqueries,tagged_subqueries
     volumes:
-      - electric-data:/app/persistent
+      - ./data/ecdata:/app/persistent
     depends_on:
       remote-db:
         condition: service_healthy
-
   remote-server:
     build:
       context: ../..
       dockerfile: crates/remote/Dockerfile
-    depends_on:
-      remote-db:
-        condition: service_healthy
-      electric:
-        condition: service_started
+      tags:
+        - bloopai/vibe-kanban-remote:0.0.160-alpine3.23
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:3000:8081"
     environment:
       SERVER_DATABASE_URL: postgres://remote:remote@remote-db:5432/remote
       SERVER_LISTEN_ADDR: 0.0.0.0:8081
@@ -54,9 +52,9 @@ services:
       GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET:?set in .env.remote}
       VIBEKANBAN_REMOTE_JWT_SECRET: ${VIBEKANBAN_REMOTE_JWT_SECRET:?set in .env.remote}
       LOOPS_EMAIL_API_KEY: ${LOOPS_EMAIL_API_KEY:?set in .env.remote}
-      SERVER_PUBLIC_BASE_URL: http://localhost:3000
-      VITE_APP_BASE_URL: http://localhost:3000
-      VITE_API_BASE_URL: http://localhost:3000
+      SERVER_PUBLIC_BASE_URL: http://127.0.0.1:3000
+      VITE_APP_BASE_URL: http://127.0.0.1:3000
+      VITE_API_BASE_URL: http://127.0.0.1:3000
       ELECTRIC_ROLE_PASSWORD: ${ELECTRIC_ROLE_PASSWORD:?set in .env.remote}
       R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
       R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
@@ -67,10 +65,8 @@ services:
       GITHUB_APP_PRIVATE_KEY: ${GITHUB_APP_PRIVATE_KEY:-}
       GITHUB_APP_WEBHOOK_SECRET: ${GITHUB_APP_WEBHOOK_SECRET:-}
       GITHUB_APP_SLUG: ${GITHUB_APP_SLUG:-}
-    ports:
-      - "127.0.0.1:3000:8081"
-    restart: unless-stopped
-
-volumes:
-  remote-db-data:
-  electric-data:
+    depends_on:
+      remote-db:
+        condition: service_healthy
+      electric:
+        condition: service_started
