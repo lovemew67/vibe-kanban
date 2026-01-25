@@ -1,3 +1,6 @@
+# Docker Compose
+/data
+
 # Rust
 /target
 **/*.rs.bk
