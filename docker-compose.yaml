@@ -6,7 +6,16 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ~/.ssh/agentic/id_rsa:/home/appuser/.ssh/id_rsa:ro
+      - ~/.ssh/ui/id_rsa:/home/appuser/.ssh/id_rsa:ro
       - ./data/vkdata:/home/appuser/.local/share/vibe-kanban
     extra_hosts:
+      # 允許 host.docker.internal 存取
       - "host.docker.internal:host-gateway"
+      # 封鎖 Sentry
+      - "o4509603705192449.ingest.de.sentry.io:127.0.0.1"
+      # 封鎖 PostHog
+      - "app.posthog.com:127.0.0.1"
+      - "eu.posthog.com:127.0.0.1"
+      - "us.posthog.com:127.0.0.1"
+      - "us.i.posthog.com:127.0.0.1"
+      - "eu.i.posthog.com:127.0.0.1"

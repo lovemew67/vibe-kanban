@@ -65,6 +65,15 @@ services:
       GITHUB_APP_PRIVATE_KEY: ${GITHUB_APP_PRIVATE_KEY:-}
       GITHUB_APP_WEBHOOK_SECRET: ${GITHUB_APP_WEBHOOK_SECRET:-}
       GITHUB_APP_SLUG: ${GITHUB_APP_SLUG:-}
+    extra_hosts:
+      # 封鎖 Sentry
+      - "o4509603705192449.ingest.de.sentry.io:127.0.0.1"
+      # 封鎖 PostHog
+      - "app.posthog.com:127.0.0.1"
+      - "eu.posthog.com:127.0.0.1"
+      - "us.posthog.com:127.0.0.1"
+      - "us.i.posthog.com:127.0.0.1"
+      - "eu.i.posthog.com:127.0.0.1"
     depends_on:
       remote-db:
         condition: service_healthy
