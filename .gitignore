@@ -1,5 +1,6 @@
 # Docker Compose
 /data
+/test
 
 # Rust
 /target
