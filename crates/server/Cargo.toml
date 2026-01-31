@@ -52,6 +52,7 @@ regex = "1"
 
 [build-dependencies]
 dotenv = "0.15"
+chrono = "0.4"
 
 [features]
 default = []

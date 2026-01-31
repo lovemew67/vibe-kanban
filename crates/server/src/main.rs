@@ -27,6 +27,18 @@ pub enum VibeKanbanError {
 
 #[tokio::main]
 async fn main() -> Result<(), VibeKanbanError> {
+    if let Some(arg) = std::env::args().nth(1) {
+        if arg == "version" || arg == "--version" || arg == "-V" {
+            println!(
+                "server {} (commit {}, built {})",
+                env!("CARGO_PKG_VERSION"),
+                env!("VIBEKANBAN_GIT_HASH"),
+                env!("VIBEKANBAN_BUILD_TIME")
+            );
+            return Ok(());
+        }
+    }
+
     // Install rustls crypto provider before any TLS operations
     rustls::crypto::aws_lc_rs::default_provider()
         .install_default()
