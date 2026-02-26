@@ -6,6 +6,8 @@ const PROJECT_ROOT: &str = env!("CARGO_MANIFEST_DIR");
 pub fn asset_dir() -> std::path::PathBuf {
     let path = if cfg!(debug_assertions) {
         std::path::PathBuf::from(PROJECT_ROOT).join("../../dev_assets")
+    } else if let Ok(custom) = std::env::var("VIBE_KANBAN_DATA_DIR") {
+        std::path::PathBuf::from(custom)
     } else {
         ProjectDirs::from("ai", "bloop", "vibe-kanban")
             .expect("OS didn't give us a home directory")
