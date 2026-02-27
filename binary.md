@@ -1,5 +1,7 @@
 # binary
 
+## backend
+
 ```
 - xcode-select --install
 - brew install node
@@ -36,4 +38,24 @@ used: VIBE_KANBAN_DATA_DIR=/Users/zzh/Downloads/dkcp/vibe-kanban HOST=0.0.0.0 PO
 ```
 - https://github.com/BloopAI/vibe-kanban/issues/770
 - https://github.com/korjavin/vibe-kanban/commit/96860f3de6425500ac8f1219580db71f7ab8195e#diff-da6498268e99511d9ba0df3c13e439d10556a812881c9d03955b2ef7c6c1c655
+```
+
+## mcp
+
+```
+cargo build --release --target x86_64-apple-darwin --bin mcp_task_server
+cargo build --release --target aarch64-apple-darwin --bin mcp_task_server
+lipo -create target/x86_64-apple-darwin/release/mcp_task_server target/aarch64-apple-darwin/release/mcp_task_server -output ./target/vibe-kanban-mcp
+```
+```
+{
+	"mcpServers": {
+		"vibe-kanban": {
+			"command": "/path/to/vibe-kanban-mcp",
+			"env": {
+				"VIBE_KANBAN_DATA_DIR": "/Users/zzh/Downloads/dkcp/vibe-kanban"
+			}
+		}
+	}
+}
 ```
