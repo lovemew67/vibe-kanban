@@ -30,7 +30,8 @@ lipo -create target/x86_64-apple-darwin/release/server target/aarch64-apple-darw
 ➜  vibe-kanban git:(release/v0.0.160) 
 ```
 ```
-HOST=0.0.0.0 PORT=3000 VK_ALLOWED_ORIGINS="http://192.168.2.185:3000" vibe-kanban
+full: VIBE_KANBAN_DATA_DIR=/Users/zzh/Downloads/dkcp/vibe-kanban HOST=0.0.0.0 PORT=3000 VK_ALLOWED_ORIGINS="http://192.168.2.185:3000" vibe-kanban
+used: VIBE_KANBAN_DATA_DIR=/Users/zzh/Downloads/dkcp/vibe-kanban HOST=0.0.0.0 PORT=3000 vibe-kanban
 ```
 ```
 - https://github.com/BloopAI/vibe-kanban/issues/770
