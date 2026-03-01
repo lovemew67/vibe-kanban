@@ -2,6 +2,7 @@
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 import fs from "fs";
 
@@ -69,6 +70,51 @@ export default defineConfig({
     }),
     sentryVitePlugin({ org: "bloop-ai", project: "vibe-kanban" }),
     executorSchemasPlugin(),
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: "auto",
+      manifest: {
+        name: "Vibe Kanban",
+        short_name: "VK",
+        description: "AI-powered kanban board",
+        start_url: "/",
+        theme_color: "#ffffff",
+        background_color: "#ffffff",
+        display: "standalone",
+        icons: [
+          {
+            src: "/favicon-vk-light.svg",
+            sizes: "any",
+            purpose: "any",
+            type: "image/svg+xml",
+          },
+          {
+            src: "/favicon-vk-light-maskable.svg",
+            sizes: "any",
+            purpose: "maskable",
+            type: "image/svg+xml",
+          },
+        ],
+      },
+      workbox: {
+        // Cache the app shell and static assets
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,woff,woff2}"],
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MiB
+        // Network-first for API calls — don't cache
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [
+          {
+            urlPattern: /^\/api\//,
+            handler: "NetworkOnly",
+          },
+        ],
+      },
+      devOptions: {
+        enabled: true,
+        type: "classic",
+      },
+    }),
   ],
   resolve: {
     alias: {
