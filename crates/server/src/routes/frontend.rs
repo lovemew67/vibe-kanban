@@ -1,5 +1,6 @@
 use axum::{
     body::Body,
+    extract::Request,
     http::HeaderValue,
     response::{IntoResponse, Response},
 };
@@ -10,13 +11,16 @@ use rust_embed::RustEmbed;
 #[folder = "../../frontend/dist"]
 pub struct Assets;
 
-pub async fn serve_frontend(uri: axum::extract::Path<String>) -> impl IntoResponse {
-    let path = uri.trim_start_matches('/');
-    serve_file(path).await
-}
-
 pub async fn serve_frontend_root() -> impl IntoResponse {
     serve_file("index.html").await
+}
+
+/// Fallback handler for all non-API routes (SPA routing + static assets).
+/// Using fallback instead of a catch-all route ensures API routes always
+/// take precedence, preventing conflicts with WebSocket upgrade requests.
+pub async fn serve_frontend_fallback(request: Request) -> impl IntoResponse {
+    let path = request.uri().path().trim_start_matches('/');
+    serve_file(path).await
 }
 
 async fn serve_file(path: &str) -> impl IntoResponse + use<> {
